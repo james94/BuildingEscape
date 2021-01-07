@@ -21,7 +21,10 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 	InitialYaw = GetOwner()->GetActorRotation().Yaw;
 	CurrentYaw = InitialYaw;
-	TargetYaw = InitialYaw + 90.f;
+	// Our TargetYaw will be our InitialYaw plus whatever is the value assigned to TargetYaw in our OpenDoor.h after
+	// UPROPERTY(EditAnywhere). NOTE: we can even edit the TargetYaw for one or both of our doors in Unreal Engine
+	// Editor and that will affect how much our one or both of our doors open.
+	TargetYaw += InitialYaw; // TargetYaw = TargetYaw + InitialYaw
 }
 
 
