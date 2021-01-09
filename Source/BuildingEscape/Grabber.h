@@ -29,4 +29,7 @@ private:
 	float Reach = 200.f; // 1 meter reach
 
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	UInputComponent* InputComponent = nullptr;
+
+	void Grab();
 };
