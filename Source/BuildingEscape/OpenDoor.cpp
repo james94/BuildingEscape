@@ -25,6 +25,11 @@ void UOpenDoor::BeginPlay()
 	// UPROPERTY(EditAnywhere). NOTE: we can even edit the TargetYaw for one or both of our doors in Unreal Engine
 	// Editor and that will affect how much our one or both of our doors open.
 	TargetYaw += InitialYaw; // TargetYaw = TargetYaw + InitialYaw
+
+	if(!PressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s has the open door component on it, but no pressureplate set."), *GetOwner()->GetName());
+	}
 }
 
 
@@ -34,7 +39,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// If actor that opens is overlapping with our door trigger volume pressure plate, then open door
-	if(PressurePlate->IsOverlappingActor(ActorThatOpens))
+	if(PressurePlate && PressurePlate->IsOverlappingActor(ActorThatOpens))
 	{
 		OpenDoor(DeltaTime);
 	}
