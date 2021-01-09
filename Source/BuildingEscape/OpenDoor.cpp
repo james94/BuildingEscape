@@ -47,18 +47,23 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if(PressurePlate && PressurePlate->IsOverlappingActor(ActorThatOpens))
 	{
 		OpenDoor(DeltaTime);
+		DoorLastOpened = GetWorld()->GetTimeSeconds(); // whatever time is in the world
 	}
 	else
 	{
-		CloseDoor(DeltaTime);
+		// if the door has been open longer than DoorCloseDelay x seconds
+		// in other words, if current time minus DoorLastOpened is greater than DoorCloseDelay, close door
+		if(GetWorld()->GetTimeSeconds() - DoorLastOpened > DoorCloseDelay)
+		{
+			CloseDoor(DeltaTime);
+		}
 	}
-	
 }
 
 void UOpenDoor::OpenDoor(float &DeltaTime)
 {
 	// CurrentYaw = FMath::Lerp(CurrentYaw, TargetYaw, DeltaTime * 0.5f);
-	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, TargetYaw, DeltaTime, 45);// Open Door in 2 sec; 45 deg per sec
+	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, TargetYaw, DeltaTime, 72);// Open Door closer to 1 sec; 72 deg per sec
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
@@ -66,7 +71,7 @@ void UOpenDoor::OpenDoor(float &DeltaTime)
 
 void UOpenDoor::CloseDoor(float &DeltaTime)
 {
-	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, InitialYaw, DeltaTime, 45);// Open Door in 2 sec; 45 deg per sec
+	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, InitialYaw, DeltaTime, 90);// Slam to Close Door in 1 sec; 90 deg per sec
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
