@@ -23,10 +23,10 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 	InitialYaw = GetOwner()->GetActorRotation().Yaw;
 	CurrentYaw = InitialYaw;
-	// Our TargetYaw will be our InitialYaw plus whatever is the value assigned to TargetYaw in our OpenDoor.h after
-	// UPROPERTY(EditAnywhere). NOTE: we can even edit the TargetYaw for one or both of our doors in Unreal Engine
+	// Our OpenAngle will be our InitialYaw plus whatever is the value assigned to OpenAngle in our OpenDoor.h after
+	// UPROPERTY(EditAnywhere). NOTE: we can even edit the OpenAngle for one or both of our doors in Unreal Engine
 	// Editor and that will affect how much our one or both of our doors open.
-	TargetYaw += InitialYaw; // TargetYaw = TargetYaw + InitialYaw
+	OpenAngle += InitialYaw; // OpenAngle = OpenAngle + InitialYaw
 
 	if(!PressurePlate)
 	{
@@ -62,8 +62,8 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UOpenDoor::OpenDoor(float &DeltaTime)
 {
-	// CurrentYaw = FMath::Lerp(CurrentYaw, TargetYaw, DeltaTime * 0.5f);
-	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, TargetYaw, DeltaTime, 72);// Open Door closer to 1 sec; 72 deg per sec
+	// CurrentYaw = FMath::Lerp(CurrentYaw, OpenAngle, DeltaTime * 0.5f);
+	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, OpenAngle, DeltaTime, DoorOpenSpeed);// Open Door closer to 1 sec; 72 deg per sec
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
@@ -71,7 +71,7 @@ void UOpenDoor::OpenDoor(float &DeltaTime)
 
 void UOpenDoor::CloseDoor(float &DeltaTime)
 {
-	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, InitialYaw, DeltaTime, 90);// Slam to Close Door in 1 sec; 90 deg per sec
+	CurrentYaw = FMath::FInterpConstantTo(CurrentYaw, InitialYaw, DeltaTime, DoorCloseSpeed);// Slam to Close Door in 1 sec; 90 deg per sec
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
