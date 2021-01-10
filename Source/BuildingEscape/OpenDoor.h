@@ -51,8 +51,5 @@ private:
 	float DoorCloseSpeed = 90.f; // 90.0 deg per second
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
-		
-	UPROPERTY(EditAnywhere)
-	AActor* ActorThatOpens;
+	ATriggerVolume* PressurePlate = nullptr;
 };

@@ -35,9 +35,6 @@ void UOpenDoor::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s has the open door component on it, but no pressureplate set."), *GetOwner()->GetName());
 	}
-
-	// Initialize ActorThatOpens with Default Pawn. So for instance, when we press play, we'll see ActorThatOpens is already set
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 
@@ -86,6 +83,7 @@ float UOpenDoor::TotalMassOfActors() const
 
 	// Find All Overlapping Actors
 	TArray<AActor*> OverlappingActors;
+	if(!PressurePlate){return TotalMass;}
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
 
 	// Add Up Their Masses
