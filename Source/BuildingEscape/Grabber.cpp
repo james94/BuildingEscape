@@ -1,9 +1,10 @@
 // Copyright James Medel 2021
 
+#include "Grabber.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
-#include "Grabber.h"
+
 
 #define OUT
 
@@ -54,18 +55,38 @@ void UGrabber::Grab()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed"));
 
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation, 
+		OUT PlayerViewPointRotation
+	);
+
+	// Draw a line from player showing the reach. LineTraceEnd = Vector + UnitVector * Reach
+	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
+
 	// Only raycast when key is pressed and see if we reach any actors with physics body collision channel set
-	GetFirstPhysicsBodyInReach();
+	FHitResult HitResult = GetFirstPhysicsBodyInReach();
+	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 
-	// If we hit something then attach the physics handle.
-
-	// TODO: attach physics handle
+	// If our Player hits something (an actor) then attach the physics handle.
+	if(HitResult.GetActor())
+	{
+		// TODO: attach physics handle
+		PhysicsHandle->GrabComponentAtLocation
+			(
+				ComponentToGrab,
+				NAME_None,
+				LineTraceEnd
+			);
+	}
 }
 
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grabber Released"));
-	// TODO: remove/release the physics handle
+	// Release the current held component
+	PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
@@ -73,8 +94,25 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// If the physics handle is attached
+	// Get players viewpoint
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPointLocation, 
+		OUT PlayerViewPointRotation
+	);
+
+	// Draw a line from player showing the reach. LineTraceEnd = Vector + UnitVector * Reach
+	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
+
+	// If the physics handle is attached. If we grabbed something
+	if(PhysicsHandle->GrabbedComponent)
+	{
 		// Move the object we are holding
+		// We need target location to be the line trace end
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
+		
 }
 
 FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
