@@ -26,7 +26,10 @@ protected:
 private:
 	float Reach = 200.f; // 1 meter reach
 
+	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+
+	UPROPERTY()
 	UInputComponent* InputComponent = nullptr;
 
 	void Grab();
