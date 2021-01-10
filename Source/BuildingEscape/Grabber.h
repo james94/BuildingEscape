@@ -7,7 +7,6 @@
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Grabber.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BUILDINGESCAPE_API UGrabber : public UActorComponent
 {
@@ -38,4 +37,10 @@ private:
 	// Return the first Actor within reach with a physics body.
 	// const since we don't want it changing what it ends up getting hit by
 	FHitResult GetFirstPhysicsBodyInReach() const;
+
+	// Return The Line Trace End
+	FVector GetPlayersReach() const;
+
+	// Get Players Position In the World
+	FVector GetPlayersWorldPos() const;
 };
